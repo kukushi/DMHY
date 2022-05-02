@@ -25,14 +25,18 @@
  *
  *  @param url Download file url
  */
-- (void)downloadTorrentWithURL:(NSURL *)url;
+- (void)downloadTorrentWithURL:(NSURL *)url fileName:(NSString *)fileName;
 /**
  *  Download torrent from share.dmhy.org torrent description page
  *  1. Exract torrent download url
  *  @param url dmhy bangumi description page
  */
-- (void)downloadTorrentFromPageURLString:(NSString *)urlString;
+- (void)downloadTorrentFromPageURLString:(NSString *)urlString  fileName:(NSString *)fileName;
 
-- (void)downloadTorrentFromPageURLString:(NSString *)urlString willStartBlock:(void(^)()) startBlock success:(void(^)()) successHandler failure:(void(^)(NSError *error)) failureHandler;
+- (void)downloadTorrentFromPageURLString:(NSString *)urlString
+                                fileName:(NSString *)fileName
+                          willStartBlock:(void(^)())startBlock
+                                 success:(void(^)())successHandler
+                                 failure:(void(^)(NSError *error))failureHandler;
 
 @end

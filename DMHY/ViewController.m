@@ -383,7 +383,9 @@
     TorrentItem *item = (TorrentItem *)[self.torrents objectAtIndex:row];
     if ([self.site.name isEqualToString:@"dmhy"]) {
         if (!self.isMagnetLink) {
-            [[DMHYDownloader downloader] downloadTorrentFromPageURLString:item.link.absoluteString willStartBlock:^{
+            [[DMHYDownloader downloader] downloadTorrentFromPageURLString:item.link.absoluteString
+                                                                 fileName:item.title
+                                                           willStartBlock:^{
                [self startAnimatingProgressIndicator];
             } success:^{
                 dispatch_async(dispatch_get_main_queue(), ^{
@@ -397,14 +399,14 @@
         }
     }
     if ([self.site.name containsString:@"nyaa.se"]) {
-        [[DMHYDownloader downloader] downloadTorrentWithURL:item.link];
+        [[DMHYDownloader downloader] downloadTorrentWithURL:item.link fileName:item.title];
         [self stopAnimatingProgressIndicator];
         return;
     }
     // acg.rip contains .torrent bt.acg.gg contains down.php
     if ([item.magnet.absoluteString containsString:@".torrent"] ||
         [item.magnet.absoluteString containsString:@"down.php"]) {
-        [[DMHYDownloader downloader] downloadTorrentWithURL:item.magnet];
+        [[DMHYDownloader downloader] downloadTorrentWithURL:item.magnet fileName:item.title];
         [self stopAnimatingProgressIndicator];
         return;
     }

@@ -25,30 +25,39 @@
     return downloader;
 }
 
-- (void)downloadTorrentWithURL:(NSURL *)url {
+- (void)downloadTorrentWithURL:(NSURL *)url fileName:(NSString *)fileName {
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     NSURLSessionDownloadTask *downloadTask = [self.manager downloadTaskWithRequest:request
                                                                           progress:nil
                                                                        destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-                                                                           NSURL *savePath = [PreferenceController preferenceSavePath];
-                                                                           if (!savePath) {
-                                                                               savePath = [PreferenceController userDownloadPath];
-                                                                           }
-                                                                           return [savePath URLByAppendingPathComponent:[response suggestedFilename]];
-                                                                           
-                                                                       } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nonnull filePath, NSError * _Nonnull error) {
-                                                                           NSString *fileName = [response suggestedFilename];
-                                                                           [self postUserNotificationWithFileName:fileName];
-                                                                           
-                                                                       }];
+        NSURL *savePath = [PreferenceController preferenceSavePath];
+        if (!savePath) {
+            savePath = [PreferenceController userDownloadPath];
+        }
+        NSString *torrentExtension = [[response suggestedFilename] pathExtension];
+        return [savePath URLByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", fileName, torrentExtension]];
+        
+    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nonnull filePath, NSError * _Nonnull error) {
+        NSString *fileName = [response suggestedFilename];
+        [self postUserNotificationWithFileName:fileName];
+        
+    }];
     [downloadTask resume];
 }
 
-- (void)downloadTorrentFromPageURLString:(NSString *)urlString {
-    [self downloadTorrentFromPageURLString:urlString willStartBlock:nil success:nil failure:nil];
+- (void)downloadTorrentFromPageURLString:(NSString *)urlString fileName:(NSString *)fileName {
+    [self downloadTorrentFromPageURLString:urlString
+                                  fileName:fileName
+                            willStartBlock:nil
+                                   success:nil
+                                   failure:nil];
 }
 
-- (void)downloadTorrentFromPageURLString:(NSString *)urlString willStartBlock:(void (^)())startBlock success:(void (^)())successHandler failure:(void (^)(NSError *))failureHandler {
+- (void)downloadTorrentFromPageURLString:(NSString *)urlString
+                                fileName:(NSString *)fileName
+                          willStartBlock:(void (^)())startBlock
+                                 success:(void (^)())successHandler
+                                 failure:(void (^)(NSError *))failureHandler {
     if (startBlock) {
         startBlock();
     }
@@ -64,7 +73,7 @@
             }];
             
             NSURL *dlURL = [NSURL URLWithString:[NSString stringWithFormat:@"https:%@",downloadString]];
-            [self downloadTorrentWithURL:dlURL];
+            [self downloadTorrentWithURL:dlURL fileName:fileName];
             if (successHandler) {
                 successHandler();
             }

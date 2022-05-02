@@ -73,18 +73,18 @@
                 if ([site.responseType isEqualToString:@"xml"]) {
                     [[DMHYXMLDataManager manager] fetchFromSite:site queryKeyword:keyword fetchedNew:^(DMHYTorrent *torrent) {
                         if ([site.name isEqualToString:@"dmhy"]) {
-                            [[DMHYDownloader downloader] downloadTorrentFromPageURLString:torrent.link];
+                            [[DMHYDownloader downloader] downloadTorrentFromPageURLString:torrent.link fileName:torrent.title];
                             return;
                         }
                         if ([site.name containsString:@"nyaa.se"]) {
-                            [[DMHYDownloader downloader] downloadTorrentWithURL:[NSURL URLWithString:torrent.link]];
+                            [[DMHYDownloader downloader] downloadTorrentWithURL:[NSURL URLWithString:torrent.link] fileName: torrent.title];
                             return;
                         } else {
                             NSURL *url = [NSURL URLWithString:torrent.magnet];
                             // acg.rip contains .torrent bt.acg.gg contains down.php
                             if ([torrent.magnet containsString:@".torrent"] ||
                                 [torrent.magnet containsString:@"down.php"]) {
-                                [[DMHYDownloader downloader] downloadTorrentWithURL:url];
+                                [[DMHYDownloader downloader] downloadTorrentWithURL:url fileName: torrent.title];
                                 // Think this wil place to downloader completion handler?
                                 torrent.isDownloaded = @YES;
                                 torrent.isNewTorrent = @NO;
