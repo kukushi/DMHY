@@ -34,8 +34,9 @@
         if (!savePath) {
             savePath = [PreferenceController userDownloadPath];
         }
+        NSString *newFileName = [fileName stringByReplacingOccurrencesOfString:@"/" withString:@"-"];
         NSString *torrentExtension = [[response suggestedFilename] pathExtension];
-        return [savePath URLByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", fileName, torrentExtension]];
+        return [savePath URLByAppendingPathComponent:[NSString stringWithFormat:@"%@.%@", newFileName, torrentExtension]];
         
     } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nonnull filePath, NSError * _Nonnull error) {
         NSString *fileName = [response suggestedFilename];
